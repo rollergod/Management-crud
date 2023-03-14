@@ -1,5 +1,5 @@
 ﻿using Management.Application.Common.Interfaces;
-using Management.Application.Common.Repositories;
+using Management.Application.Common.Interfaces.Repositories;
 using Management.Infrastructure.Persistance;
 using Management.Infrastructure.Repository;
 using Management.LoggerService;

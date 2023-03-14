@@ -24,6 +24,22 @@ namespace Management.Infrastructure.Repository
                 .ToListAsync();
         }
 
+        public async Task<Order> GetOrder(int id,bool trackChanges)
+        {
+            return !trackChanges ?
+                await _context.Orders
+                .AsNoTracking()
+                .SingleOrDefaultAsync(order => order.Id == id) :
+                await _context.Orders
+                .SingleOrDefaultAsync(order => order.Id == id);
 
+            
+        }
+
+        public async Task CreateOrder(Order order)
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+        }
     }
 }
