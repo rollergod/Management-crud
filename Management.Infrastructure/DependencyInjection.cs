@@ -1,5 +1,7 @@
 ﻿using Management.Application.Common.Interfaces;
+using Management.Application.Common.Repositories;
 using Management.Infrastructure.Persistance;
+using Management.Infrastructure.Repository;
 using Management.LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +18,8 @@ namespace Management.Infrastructure
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // datetime postgres
 
-            services.AddSingleton<ILoggerManager, LoggerManager>();
+            services.AddScoped<ILoggerManager, LoggerManager>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             return services;
         }

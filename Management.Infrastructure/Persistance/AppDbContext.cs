@@ -13,6 +13,25 @@ namespace Management.Infrastructure.Persistance
         {
             modelBuilder.Entity<OrderItem>()
                 .Property(p => p.Quantity).HasPrecision(18, 3);
+
+            modelBuilder.Entity<Provider>()
+                .HasData(
+                    new Provider()
+                    {
+                        Id = 1,
+                        Name = "Perevozchik Moscow"
+                    },
+                    new Provider()
+                    {
+                        Id = 2,
+                        Name = "Aligator Company"
+                    },
+                    new Provider()
+                    {
+                        Id = 3,
+                        Name = "Gruzovichkoff"
+                    }
+            );
         }
 
         public DbSet<Order> Orders { get; set; }
