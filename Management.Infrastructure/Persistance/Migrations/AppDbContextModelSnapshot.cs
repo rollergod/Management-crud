@@ -44,7 +44,7 @@ namespace Management.Infrastructure.Persistance.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Management.Domain.Entities.OrderItem", b =>
@@ -74,7 +74,7 @@ namespace Management.Infrastructure.Persistance.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Management.Domain.Entities.Provider", b =>
@@ -91,7 +91,7 @@ namespace Management.Infrastructure.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Providers");
+                    b.ToTable("Providers", (string)null);
 
                     b.HasData(
                         new

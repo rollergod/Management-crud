@@ -22,8 +22,4 @@
     <ProjectReference Include="..\Management.Infrastructure\Management.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>

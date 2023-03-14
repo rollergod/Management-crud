@@ -7,5 +7,7 @@ namespace Management.Application.Common.Interfaces.Repositories
         Task<IEnumerable<Order>> GetOrdersAsync(bool trackChanges);
         Task<Order?> GetOrderAsync(int id, bool trackChanges);
         Task CreateOrder(Order order);
+        Task UpdateOrderAsync(Order orderForUpdate);
+        Task DeleteOrderAsync(Order orderForDelete);
     }
 }

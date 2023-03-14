@@ -1,4 +1,6 @@
-﻿namespace Management.Domain.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Management.Domain.Entities
 {
     public class Order
     {
@@ -7,6 +9,7 @@
         public DateTime Date { get; set; }
         public int ProviderId { get; set; }
 
-        public Provider Provider { get; set; }
+        [JsonIgnore]
+        public Provider? Provider { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Management.Domain.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Management.Domain.Entities
 {
     public class OrderItem
     {
@@ -8,6 +10,7 @@
         public decimal Quantity { get; set; }
         public string Unit { get; set; }
 
-        public Order Order { get; set; }
+        [JsonIgnore]
+        public Order? Order { get; set; }
     }
 }

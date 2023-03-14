@@ -1,5 +1,6 @@
 ﻿using Management.Application.Common.Interfaces.Repositories;
 using Management.Application.Common.Interfaces.Services;
+using Management.Application.Shared.Errors.Exceptions;
 using Management.Domain.Entities;
 
 namespace Management.Infrastructure.Services
@@ -15,6 +16,13 @@ namespace Management.Infrastructure.Services
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
+            var orders = await _orderRepository.GetOrdersAsync(trackChanges: false);
+
+            var isOrderExist = orders.Any(o => o.ProviderId == order.ProviderId && o.Number == order.Number);
+
+            if(isOrderExist)
+                throw new OrderWithCurrentNumberAndProviderExist(order.Number,order.ProviderId);
+
             await _orderRepository.CreateOrder(order);
 
             return order;
@@ -31,7 +39,32 @@ namespace Management.Infrastructure.Services
         {
             var order = await _orderRepository.GetOrderAsync(id, trackChanges);
 
+            if (order == null)
+                throw new OrderNotFoundException(id);
+
             return order;
+        }
+
+        public async Task<Order> UpdateOrderAsync(int id, Order orderForUpdate,bool trackChanges)
+        {
+            var order = await _orderRepository.GetOrderAsync(id, trackChanges);
+
+            if (order == null)
+                throw new OrderNotFoundException(id);
+
+            await _orderRepository.UpdateOrderAsync(orderForUpdate);
+
+            return orderForUpdate;
+        }
+
+        public async Task DeleteOrderAsync(int id,bool trackChanges)
+        {
+            var order = await _orderRepository.GetOrderAsync(id, trackChanges);
+
+            if (order == null)
+                throw new OrderNotFoundException(id);
+
+            await _orderRepository.DeleteOrderAsync(order);
         }
     }
 }

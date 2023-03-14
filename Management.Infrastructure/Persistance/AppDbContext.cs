@@ -11,6 +11,10 @@ namespace Management.Infrastructure.Persistance
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Order>()
+                .HasIndex(order => order.Number)
+                .IsUnique();
+
             modelBuilder.Entity<OrderItem>()
                 .Property(p => p.Quantity).HasPrecision(18, 3);
 
