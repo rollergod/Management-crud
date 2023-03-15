@@ -8,7 +8,7 @@ namespace Management.Domain.Entities
         public int OrderId { get; set; }
         public string Name { get; set; }
         public decimal Quantity { get; set; }
-        public string Unit { get; set; }
+        public string Unit { get; set; } // единица измерения
 
         [JsonIgnore]
         public Order? Order { get; set; }

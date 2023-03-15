@@ -18,8 +18,6 @@ namespace Management.Infrastructure
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // datetime postgres
-
             services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderService, OrderService>();
