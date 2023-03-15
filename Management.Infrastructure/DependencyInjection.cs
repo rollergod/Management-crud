@@ -20,7 +20,9 @@ namespace Management.Infrastructure
 
             services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderItemService, OrderItemService>();
 
             return services;
         }

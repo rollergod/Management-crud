@@ -34,7 +34,7 @@ namespace Management.Infrastructure.Repository
                 .SingleOrDefaultAsync(order => order.Id == id);
         }
 
-        public async Task CreateOrder(Order order)
+        public async Task CreateOrderAsync(Order order)
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();

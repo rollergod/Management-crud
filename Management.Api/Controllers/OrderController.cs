@@ -34,9 +34,9 @@ namespace Management.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder(Order order)
         {
-            var createdCompany = await _orderService.CreateOrderAsync(order);
+            var createdOrder = await _orderService.CreateOrderAsync(order);
 
-            return Ok(createdCompany);
+            return Ok(createdOrder);
         }
 
         [HttpPut("{id:int}")]

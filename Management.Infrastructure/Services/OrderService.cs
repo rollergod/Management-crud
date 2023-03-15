@@ -23,7 +23,7 @@ namespace Management.Infrastructure.Services
             if(isOrderExist)
                 throw new OrderWithCurrentNumberAndProviderExist(order.Number,order.ProviderId);
 
-            await _orderRepository.CreateOrder(order);
+            await _orderRepository.CreateOrderAsync(order);
 
             return order;
         }   
