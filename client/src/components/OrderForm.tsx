@@ -6,14 +6,18 @@ import Col from 'react-bootstrap/Col';
 
 import Select from 'react-select';
 import axios from 'axios';
+import { SingleValue } from 'react-select/dist/declarations/src';
+
+interface Option {
+    value: string
+}
 
 const OrderForm = ({ open, setOpen }) => {
-
 
     const handleClose = () => setOpen(false);
     const [number, setNumber] = React.useState('');
     const [providerId, setProviderId] = React.useState(0);
-    const [rows, setRows] = React.useState([{
+    const [items, setItems] = React.useState([{
         name: '', quantity: '', unit: ''
     }]);
 
@@ -26,46 +30,55 @@ const OrderForm = ({ open, setOpen }) => {
         }
     ]; // TODO : доделать заказчиков
 
+
+    React.useEffect(() => {
+        //Get Providers
+    }, []);
+
     const handleSubmit = () => {
-        console.log(rows);
+        console.log(items);
 
         const data = {
             'number': number,
             'providerId': providerId,
-            'items': rows
+            'items': items
         };
 
         console.log(data);
 
-        // axios.post("https://localhost:7212/api/order",)
+        axios.post("https://localhost:7212/api/order", data)
+            .then((resp) => {
+                if (resp.status === 200)
+                    setOpen(false);
+            });
     }
 
-    const handleFormChange = (index, event) => {
-        let data = [...rows];
+    const handleFormChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        let data = [...items];
         data[index][event.target.name] = event.target.value;
-        setRows(data);
+        setItems(data);
     };
 
     const addRow = () => {
-        let newRow = { name: '', quantity: '', unit: '' }
+        let newItem = { name: '', quantity: '', unit: '' }
 
-        setRows([...rows, newRow]);
+        setItems([...items, newItem]);
     }
 
     const removeFields = (index: number) => {
-        let data = [...rows];
+        let data = [...items];
         data.splice(index, 1)
-        setRows(data)
+        setItems(data)
     }
 
-    const handleSelectChange = (option) => {
-        setProviderId(option.value);
+    const handleSelectChange = (option: SingleValue<Option>) => {
+        setProviderId(Number(option?.value));
     }
 
     return (
         <Modal show={open} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Modify Employee</Modal.Title>
+                <Modal.Title>Добавить заказ</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Row>
@@ -78,8 +91,8 @@ const OrderForm = ({ open, setOpen }) => {
                 </Row>
                 <button onClick={addRow}>Добавить элемент заказа</button>
                 {
-                    rows.length > 0 &&
-                    rows.map((obj, index) => {
+                    items.length > 0 &&
+                    items.map((obj, index) => {
                         return (
                             <div key={index}>
                                 <input
@@ -89,6 +102,7 @@ const OrderForm = ({ open, setOpen }) => {
                                     onChange={event => handleFormChange(index, event)}
                                 />
                                 <input
+                                    type='number'
                                     name='quantity'
                                     placeholder='Количество'
                                     value={obj.quantity}
@@ -108,10 +122,10 @@ const OrderForm = ({ open, setOpen }) => {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => setOpen(!open)}>
-                    Close
+                    Закрыть форму
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
-                    Save Changes
+                    Сохранить
                 </Button>
             </Modal.Footer>
         </Modal >
