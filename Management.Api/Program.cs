@@ -22,6 +22,8 @@ app.ConfigureExceptionHandler(logger);
 
 app.UseHttpsRedirection();
 
+app.UseCors("Cors");
+
 app.UseAuthorization();
 
 app.MapControllers();
