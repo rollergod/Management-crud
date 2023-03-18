@@ -1,11 +1,27 @@
+import axios from "axios";
 import React from "react";
 import Table from 'react-bootstrap/Table';
 import { client } from "../api/axiosInstance";
+import OrderForm from "./OrderForm";
+
+interface Item {
+    orderId: number,
+    name: string,
+    quantity: number,
+    unit: string
+}
+
+interface Order {
+    id: number,
+    number: number,
+    date: string,
+    items: Item[]
+}
 
 const MainTable = () => {
 
-    const [orders, setOrders] = React.useState([]);
-
+    const [orders, setOrders] = React.useState<Order[]>([]);
+    const [form, setForm] = React.useState<boolean>(false);
     const headers = [
         'Id',
         'Number',
@@ -16,60 +32,55 @@ const MainTable = () => {
         'Unit'
     ];
 
-    const fakeData = [
-        {
-            Id: 1,
-            Number: 'Test123',
-            Date: '2011-01-01',
-            OrderId: 1,
-            Name: 'Груша',
-            Quantity: 15,
-            Unit: 'Единиц'
-        }
-    ];
-
     React.useEffect(() => {
-        client.get("/order")
+        axios.get("https://localhost:7212/api/order")
             .then((response) => {
-                console.log(response);
+                console.log('test', response.data);
                 setOrders(response.data);
+                console.log(orders)
             })
             .catch((error) => {
-                console.log(error);
+                console.log('error', error);
             })
     }, []);
 
     return (
-        <Table responsive>
-            <thead>
-                <tr>
+        <div>
+            <button onClick={() => setForm((prev) => !prev)} className='btn btn-primary'>Add New Order</button>
+            {
+                form && <OrderForm open={form} setOpen={setForm}></OrderForm>
+            }
+            <Table responsive>
+                <thead>
+                    <tr>
+                        {
+                            headers.map((header, index) => (
+                                <th key={index}>{header}</th>
+                            ))
+                        }
+                    </tr>
+                </thead>
+                <tbody>
                     {
-                        headers.map((header, index) => (
-                            <th key={index}>{header}</th>
-                        ))
+
+                        orders.map((order, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td>{order.id}</td>
+                                    <td>{order.number}</td>
+                                    <td>{order.date}</td>
+                                    <td>{order.items[0].orderId}</td>
+                                    <td>{order.items[0].name}</td>
+                                    <td>{order.items[0].quantity}</td>
+                                    <td>{order.items[0].unit}</td>
+                                </tr>
+                            )
+                        })
+
                     }
-                </tr>
-            </thead>
-            <tbody>
-                {
-
-                    fakeData.map((item, index) => {
-                        return (
-                            <tr key={index}>
-                                <td>{item.Id}</td>
-                                <td>{item.Number}</td>
-                                <td>{item.Date}</td>
-                                <td>{item.OrderId}</td>
-                                <td>{item.Name}</td>
-                                <td>{item.Quantity}</td>
-                                <td>{item.Unit}</td>
-                            </tr>
-                        )
-                    })
-
-                }
-            </tbody>
-        </Table>
+                </tbody>
+            </Table>
+        </div>
     );
 }
 

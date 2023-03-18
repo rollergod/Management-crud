@@ -32,6 +32,30 @@ namespace Management.Infrastructure.Persistance
                         Name = "Gruzovichkoff"
                     }
             );
+
+            modelBuilder.Entity<Order>()
+            .HasData(
+                new Order()
+                {
+                    Id = 1,
+                    Number = "TestOrder",
+                    Date = DateOnly.FromDateTime(DateTime.Now),
+                    ProviderId = 1,
+                }
+            );
+
+            modelBuilder.Entity<OrderItem>()
+            .HasData(
+                new OrderItem()
+                {
+                    Id = 1,
+                    Name = "TestOrderItem",
+                    Unit = "TestUnit",
+                    Quantity = 1,
+                    OrderId = 1
+                }
+            );
+
         }
 
         public DbSet<Order> Orders { get; set; }

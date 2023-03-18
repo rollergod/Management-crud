@@ -18,6 +18,7 @@ namespace Management.Infrastructure.Repository
         {
             return !trackChanges ?
                 await _context.Orders
+                .Include(o => o.Items)
                 .AsNoTracking()
                 .ToListAsync() :
                 await _context.Orders

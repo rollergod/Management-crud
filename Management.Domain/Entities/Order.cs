@@ -11,5 +11,9 @@ namespace Management.Domain.Entities
 
         [JsonIgnore]
         public Provider? Provider { get; set; }
+
+        //Delete if not working
+        // [JsonIgnore]
+        public ICollection<OrderItem> Items { get; set; }
     }
 }
