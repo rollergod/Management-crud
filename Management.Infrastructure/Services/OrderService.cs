@@ -66,5 +66,12 @@ namespace Management.Infrastructure.Services
 
             await _orderRepository.DeleteOrderAsync(order);
         }
+
+        public async Task<Order> GetOrderWithItemsAsync(int orderId,bool trackChanges)
+        {
+            var ordersWithItems = await _orderRepository.GetOrderWithItemsAsync(orderId,trackChanges);
+
+            return ordersWithItems;
+        }
     }
 }

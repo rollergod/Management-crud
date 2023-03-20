@@ -23,7 +23,8 @@ namespace Management.Infrastructure
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderItemService, OrderItemService>();
-
+            services.AddScoped<IProviderRepository, ProviderRepository>();
+            services.AddScoped<IProviderService, ProviderService>();
             return services;
         }
     }

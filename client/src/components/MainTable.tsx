@@ -4,32 +4,29 @@ import Table from 'react-bootstrap/Table';
 import { client } from "../api/axiosInstance";
 import OrderForm from "./OrderForm";
 
-interface Item {
-    orderId: number,
-    name: string,
-    quantity: number,
-    unit: string
-}
+// interface Item {
+//     orderId: number,
+//     name: string,
+//     quantity: number,
+//     unit: string
+// }
 
 interface Order {
     id: number,
     number: number,
     date: string,
-    items: Item[]
 }
 
 const MainTable = () => {
 
     const [orders, setOrders] = React.useState<Order[]>([]);
-    const [form, setForm] = React.useState<boolean>(false);
+    const [editForm, setEditForm] = React.useState<boolean>(false);
+    const [addForm, setAddForm] = React.useState<boolean>(false);
+    const [orderId, setOrderId] = React.useState<number>(0);
     const headers = [
         'Id',
         'Number',
         'Date',
-        'OrderId',
-        'Name',
-        'Quantity',
-        'Unit'
     ];
 
     React.useEffect(() => {
@@ -44,11 +41,18 @@ const MainTable = () => {
             })
     }, []);
 
+    const rowClickHandler = (id: number) => {
+        console.log(id);
+        setOrderId(id);
+        setEditForm((prev) => !prev);
+    }
+
     return (
         <div>
-            <button onClick={() => setForm((prev) => !prev)} className='btn btn-primary'>Add New Order</button>
+            <button onClick={() => setAddForm((prev) => !prev)} className='btn btn-primary'>Add New Order</button>
             {
-                form && <OrderForm open={form} setOpen={setForm}></OrderForm>
+                addForm && <OrderForm headerText='Добавить заказ' open={addForm} setOpen={setAddForm}></OrderForm>
+                || editForm && <OrderForm orderId={orderId} headerText='Изменить заказ' open={editForm} setOpen={setEditForm}></OrderForm>
             }
             <Table responsive>
                 <thead>
@@ -65,14 +69,10 @@ const MainTable = () => {
 
                         orders.map((order, index) => {
                             return (
-                                <tr key={index}>
+                                <tr onClick={() => rowClickHandler(order.id)} key={index}>
                                     <td>{order.id}</td>
                                     <td>{order.number}</td>
                                     <td>{order.date}</td>
-                                    <td>{order.items[0].orderId}</td>
-                                    <td>{order.items[0].name}</td>
-                                    <td>{order.items[0].quantity}</td>
-                                    <td>{order.items[0].unit}</td>
                                 </tr>
                             )
                         })

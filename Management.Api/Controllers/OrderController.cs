@@ -23,6 +23,14 @@ namespace Management.Api.Controllers
             return Ok(orders);
         }
 
+        [HttpGet("{orderId:int}/orderItems")]
+        public async Task<IActionResult> GetOrdersWithItems(int orderId)
+        {
+            var ordersWithItems = await _orderService.GetOrderWithItemsAsync(orderId, trackChanges: false);
+
+            return Ok(ordersWithItems);
+        }
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOrderByIdAsync(int id)
         {

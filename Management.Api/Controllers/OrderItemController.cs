@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Management.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // TODO : переделать роутинг и убрать метод для получения всех заказов
     public class OrderItemController : ControllerBase
     {
         private readonly IOrderItemService _orderItemService;

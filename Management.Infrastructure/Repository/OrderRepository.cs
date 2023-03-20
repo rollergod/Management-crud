@@ -18,7 +18,6 @@ namespace Management.Infrastructure.Repository
         {
             return !trackChanges ?
                 await _context.Orders
-                .Include(o => o.Items)
                 .AsNoTracking()
                 .ToListAsync() :
                 await _context.Orders
@@ -51,6 +50,16 @@ namespace Management.Infrastructure.Repository
         {
             _context.Orders.Remove(orderForDelete);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Order?> GetOrderWithItemsAsync(int orderId,bool trackChanges)
+        {
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            _context.Entry(order)
+                .Collection(o => o.Items).Load();
+            return order;
         }
     }
 }

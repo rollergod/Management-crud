@@ -12,7 +12,7 @@ interface Option {
     value: string
 }
 
-const OrderForm = ({ open, setOpen }) => {
+const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
 
     const handleClose = () => setOpen(false);
     const [number, setNumber] = React.useState('');
@@ -20,19 +20,29 @@ const OrderForm = ({ open, setOpen }) => {
     const [items, setItems] = React.useState([{
         name: '', quantity: '', unit: ''
     }]);
+    const [providers, setProviders] = React.useState([{}]);
 
-    const providers = [
-        {
-            value: '1', label: 'TestProvider1'
-        },
-        {
-            value: '2', label: 'TestProvider2'
-        }
-    ]; // TODO : доделать заказчиков
-
+    const providersArrForLabel = providers.map(function (i) { return { value: i.id, label: i.name } });
 
     React.useEffect(() => {
-        //Get Providers
+
+        axios.get(`https://localhost:7212/api/provider`)
+            .then((response) => {
+                setProviders(response.data);
+            })
+            .catch((error) => {
+                console.log('error', error);
+            })
+
+        if (orderId > 0) {
+            axios.get(`https://localhost:7212/api/order/${orderId}/orderItems`)
+                .then((response) => {
+                    console.log('orderItems', response.data);
+                })
+                .catch((error) => {
+                    console.log('error', error);
+                })
+        }
     }, []);
 
     const handleSubmit = () => {
@@ -78,7 +88,7 @@ const OrderForm = ({ open, setOpen }) => {
     return (
         <Modal show={open} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Добавить заказ</Modal.Title>
+                <Modal.Title>{headerText}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Row>
@@ -86,7 +96,7 @@ const OrderForm = ({ open, setOpen }) => {
                         <input type="text" className='form-control' placeholder='Введите номер заказа' value={number} onChange={(e) => setNumber(e.target.value)} />
                     </Col>
                     <Col>
-                        <Select options={providers} onChange={handleSelectChange} />
+                        <Select options={providersArrForLabel} onChange={handleSelectChange} />
                     </Col>
                 </Row>
                 <button onClick={addRow}>Добавить элемент заказа</button>
