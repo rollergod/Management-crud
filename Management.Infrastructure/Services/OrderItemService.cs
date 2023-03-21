@@ -1,6 +1,7 @@
 ﻿using Management.Application.Common.Interfaces.Repositories;
 using Management.Application.Common.Interfaces.Services;
 using Management.Application.Shared.Errors.Exceptions;
+using Management.Application.Shared.RequestFeatures;
 using Management.Domain.Entities;
 
 namespace Management.Infrastructure.Services
@@ -37,7 +38,13 @@ namespace Management.Infrastructure.Services
 
         public async Task<OrderItem> CreateOrderItemAsync(OrderItem orderItemForCreate)
         {
-            var orders = await _orderRepository.GetOrdersAsync(trackChanges: false);
+            var dateTimeParams = new OrderParameters
+            {
+                StartDate = DateOnly.MinValue, 
+                EndDate = DateOnly.MaxValue
+            };
+            
+            var orders = await _orderRepository.GetOrdersAsync(dateTimeParams,trackChanges: false);
             var orderItems = await _orderItemRepository.GetOrderItemsAsync(trackChanges: false);
 
             //OrderItem.Name не может быть равен Order.Number(ограничение предметной области).
@@ -45,7 +52,7 @@ namespace Management.Infrastructure.Services
 
             if (isOrderWithNumberExist)
             {
-                //exception
+                throw new OrderWithCurrentNameExist(orderItemForCreate.Name);
             }
 
             await _orderItemRepository.CreateOrderItemAsync(orderItemForCreate);

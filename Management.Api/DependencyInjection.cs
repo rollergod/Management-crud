@@ -24,6 +24,8 @@ namespace Management.Application
                 });
             });
 
+            services.AddDateOnlyTimeOnlyStringConverters(); // date only swagger converter
+
             return services;
         }
     }

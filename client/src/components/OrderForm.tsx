@@ -22,6 +22,9 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
     }]);
     const [providers, setProviders] = React.useState([{}]);
 
+
+    const [editOrderItemNumber, setEditOrderItemNumber] = React.useState('');
+    const [editOrderItemProviderId, setEditOrderItemProviderId] = React.useState(0);
     const providersArrForLabel = providers.map(function (i) { return { value: i.id, label: i.name } });
 
     React.useEffect(() => {
@@ -37,7 +40,10 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
         if (orderId > 0) {
             axios.get(`https://localhost:7212/api/order/${orderId}/orderItems`)
                 .then((response) => {
-                    console.log('orderItems', response.data);
+                    setEditOrderItemNumber(response.data.number)
+                    setEditOrderItemProviderId(response.data.providerId)
+                    setItems(response.data.items)
+                    console.log('orderItem', response.data);
                 })
                 .catch((error) => {
                     console.log('error', error);
@@ -46,21 +52,43 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
     }, []);
 
     const handleSubmit = () => {
-        console.log(items);
+        if (orderId > 0) {
+            console.log(items);
+            const data = {
+                'id': orderId,
+                'number': editOrderItemNumber,
+                'providerId': editOrderItemProviderId,
+                'items': items
+            };
+            axios.put(`https://localhost:7212/api/order/${orderId}`, data)
+                .then((resp) => {
+                    if (resp.status === 200)
+                        setOpen(false);
+                });
+        }
+        else {
+            const data = {
+                'number': number,
+                'providerId': providerId,
+                'items': items
+            };
+            axios.post("https://localhost:7212/api/order", data)
+                .then((resp) => {
+                    if (resp.status === 200)
+                        setOpen(false);
+                });
+        }
+    }
 
-        const data = {
-            'number': number,
-            'providerId': providerId,
-            'items': items
-        };
-
-        console.log(data);
-
-        axios.post("https://localhost:7212/api/order", data)
-            .then((resp) => {
-                if (resp.status === 200)
-                    setOpen(false);
-            });
+    const handleRemove = (id: number) => {
+        axios.delete(`https://localhost:7212/api/order/${orderId}`)
+            .then((response) => {
+                console.log('delete', response);
+                setOpen(false);
+            })
+            .catch((error) => {
+                console.log('error', error);
+            })
     }
 
     const handleFormChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,10 +121,14 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
             <Modal.Body>
                 <Row>
                     <Col>
-                        <input type="text" className='form-control' placeholder='Введите номер заказа' value={number} onChange={(e) => setNumber(e.target.value)} />
+                        {
+                            orderId > 0 ?
+                                <input type="text" className='form-control' placeholder='Введите номер заказа' value={editOrderItemNumber} onChange={(e) => setEditOrderItemNumber(e.target.value)} />
+                                : <input type="text" className='form-control' placeholder='Введите номер заказа' value={number} onChange={(e) => setNumber(e.target.value)} />
+                        }
                     </Col>
                     <Col>
-                        <Select options={providersArrForLabel} onChange={handleSelectChange} />
+                        <Select options={providersArrForLabel} value={providersArrForLabel.find(el => el.value === editOrderItemProviderId)} onChange={handleSelectChange} />
                     </Col>
                 </Row>
                 <button onClick={addRow}>Добавить элемент заказа</button>
@@ -137,6 +169,12 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                 <Button variant="primary" onClick={handleSubmit}>
                     Сохранить
                 </Button>
+                {
+                    orderId > 0 &&
+                    <Button variant="danger" onClick={() => handleRemove(orderId)}>
+                        Удалить заказ
+                    </Button>
+                }
             </Modal.Footer>
         </Modal >
     )

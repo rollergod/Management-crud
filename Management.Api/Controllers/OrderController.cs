@@ -1,4 +1,5 @@
 ﻿using Management.Application.Common.Interfaces.Services;
+using Management.Application.Shared.RequestFeatures;
 using Management.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,9 @@ namespace Management.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrders([FromQuery] OrderParameters orderParams)
         {
-            var orders = await _orderService.GetAllOrdersAsync(trackChanges: false);
+            var orders = await _orderService.GetAllOrdersAsync(orderParams,trackChanges: false);
 
             return Ok(orders);
         }
@@ -50,7 +51,7 @@ namespace Management.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order orderForUpdate)
         {
-            var updatedOrder = await _orderService.UpdateOrderAsync(id, orderForUpdate,trackChanges: false);
+            var updatedOrder = await _orderService.UpdateOrderAsync(id, orderForUpdate,trackChanges: true);
 
             return Ok(updatedOrder);
         }

@@ -1,6 +1,8 @@
 ﻿using Management.Application.Common.Interfaces.Repositories;
+using Management.Application.Shared.RequestFeatures;
 using Management.Domain.Entities;
 using Management.Infrastructure.Persistance;
+using Management.Infrastructure.Persistance.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace Management.Infrastructure.Repository
@@ -14,13 +16,15 @@ namespace Management.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersAsync(bool trackChanges)
+        public async Task<IEnumerable<Order>> GetOrdersAsync(OrderParameters orderParams,bool trackChanges)
         {
             return !trackChanges ?
                 await _context.Orders
                 .AsNoTracking()
+                .DateQuery(orderParams)
                 .ToListAsync() :
                 await _context.Orders
+                .DateQuery(orderParams)
                 .ToListAsync();
         }
 
@@ -28,6 +32,7 @@ namespace Management.Infrastructure.Repository
         {
             return !trackChanges ?
                 await _context.Orders
+                .Include(o => o.Items)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(order => order.Id == id) :
                 await _context.Orders
@@ -42,6 +47,18 @@ namespace Management.Infrastructure.Repository
 
         public async Task UpdateOrderAsync(Order orderForUpdate)
         {
+            var validItems = orderForUpdate.Items.Select(i => i.Id).ToList();
+
+            var missingItems = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderForUpdate.Id 
+                    && !validItems.Contains(oi.Id))
+                .ToListAsync();
+
+            if (missingItems.Count > 0)
+            { 
+                _context.OrderItems.RemoveRange(missingItems);
+            }
+
             _context.Orders.Update(orderForUpdate);
             await _context.SaveChangesAsync();
         }

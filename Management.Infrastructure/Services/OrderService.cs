@@ -1,7 +1,9 @@
 ﻿using Management.Application.Common.Interfaces.Repositories;
 using Management.Application.Common.Interfaces.Services;
 using Management.Application.Shared.Errors.Exceptions;
+using Management.Application.Shared.RequestFeatures;
 using Management.Domain.Entities;
+using System.Data;
 
 namespace Management.Infrastructure.Services
 {
@@ -16,7 +18,13 @@ namespace Management.Infrastructure.Services
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
-            var orders = await _orderRepository.GetOrdersAsync(trackChanges: false);
+            var dateTimeParams = new OrderParameters
+            {
+                StartDate = DateOnly.MinValue,
+                EndDate = DateOnly.MaxValue
+            };
+
+            var orders = await _orderRepository.GetOrdersAsync(dateTimeParams,trackChanges: false);
 
             var isOrderExist = orders.Any(o => o.ProviderId == order.ProviderId && o.Number == order.Number);
 
@@ -28,9 +36,9 @@ namespace Management.Infrastructure.Services
             return order;
         }   
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync(bool trackChanges)
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync(OrderParameters orderParams, bool trackChanges)
         {
-            var orders = await _orderRepository.GetOrdersAsync(trackChanges);
+            var orders = await _orderRepository.GetOrdersAsync(orderParams,trackChanges);
 
             return orders;
         }
@@ -47,12 +55,16 @@ namespace Management.Infrastructure.Services
 
         public async Task<Order> UpdateOrderAsync(int id, Order orderForUpdate,bool trackChanges)
         {
-            var order = await _orderRepository.GetOrderAsync(id, trackChanges);
+            var order = await _orderRepository.GetOrderAsync(id, trackChanges: false);
 
             if (order == null)
                 throw new OrderNotFoundException(id);
 
-            await _orderRepository.UpdateOrderAsync(orderForUpdate);
+            order.ProviderId = orderForUpdate.ProviderId;
+            order.Number = orderForUpdate.Number;
+            order.Items = orderForUpdate.Items;
+
+            await _orderRepository.UpdateOrderAsync(order);
 
             return orderForUpdate;
         }
