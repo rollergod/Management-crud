@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Management.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // TODO : переделать роутинг и убрать метод для получения всех заказов
+    [Route("api/orders/{orderId}/orderitem")] 
     public class OrderItemController : ControllerBase
     {
         private readonly IOrderItemService _orderItemService;
@@ -16,33 +16,37 @@ namespace Management.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetOrderItems()
+        public async Task<IActionResult> GetOrderItems(int orderId)
         {
-            var orderItems = await _orderItemService.GetOrderItemsAsync(trackChanges: false);
+            var orderItems = await _orderItemService.GetOrderItemsAsync(orderId,trackChanges: false);
 
             return Ok(orderItems);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GerOrderItemById(int id)
+        public async Task<IActionResult> GerOrderItemById(int orderId, int id)
         {
-            var orderItem = await _orderItemService.GetOrderItemByIdAsync(id, trackChanges: false);
+            var orderItem = await _orderItemService.GetOrderItemByIdAsync(orderId,id, trackChanges: false);
 
             return Ok(orderItem);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(OrderItem orderItem)
+        public async Task<IActionResult> CreateOrder(int orderId, OrderItem orderItem)
         {
-            var createdOrderItem = await _orderItemService.CreateOrderItemAsync(orderItem);
+            var createdOrderItem = await _orderItemService.CreateOrderItemAsync(
+                orderId,
+                orderItem,
+                trackChanges: false);
 
             return Ok(createdOrderItem);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateOrderItem(int id, [FromBody] OrderItem orderItem)
+        public async Task<IActionResult> UpdateOrderItem(int orderId, int id, [FromBody] OrderItem orderItem)
         {
             var updatedOrder = await _orderItemService.UpdateOrderItemAsync(
+                orderId,
                 id,
                 orderItem,
                 trackChanges: false);
@@ -51,9 +55,9 @@ namespace Management.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteOrderAsync(int id)
+        public async Task<IActionResult> DeleteOrderAsync(int orderId, int id)
         {
-            await _orderItemService.DeleteOrderItemAsync(id, trackChanges: false);
+            await _orderItemService.DeleteOrderItemAsync(orderId, id, trackChanges: false);
 
             return NoContent();
         }

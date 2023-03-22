@@ -1,4 +1,5 @@
 ﻿using Management.Application.Common.Interfaces.Services;
+using Management.Application.Shared.Dto;
 using Management.Application.Shared.RequestFeatures;
 using Management.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,7 @@ namespace Management.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(Order order)
+        public async Task<IActionResult> CreateOrder(OrderDto order)
         {
             var createdOrder = await _orderService.CreateOrderAsync(order);
 
@@ -49,9 +50,9 @@ namespace Management.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order orderForUpdate)
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderDto orderForUpdate)
         {
-            var updatedOrder = await _orderService.UpdateOrderAsync(id, orderForUpdate,trackChanges: true);
+            var updatedOrder = await _orderService.UpdateOrderAsync(id, orderForUpdate,trackChanges: false);
 
             return Ok(updatedOrder);
         }

@@ -1,11 +1,9 @@
 import axios from "axios";
 import React from "react";
 import Table from 'react-bootstrap/Table';
-import { client } from "../api/axiosInstance";
 import OrderForm from "./OrderForm";
 
 import { DatePicker } from "antd";
-import moment from "moment";
 import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 
@@ -37,36 +35,28 @@ const MainTable = () => {
     ];
 
     React.useEffect(() => {
-        axios.get(`https://localhost:7212/api/order?startDate=${dates[0]}&endDate=${dates[1]}`)
-            .then((response) => {
-                console.log('test', response.data);
-                setOrders(response.data);
-                console.log(orders)
-            })
-            .catch((error) => {
-                console.log('error', error);
-            })
+        sendGetRequest();
     }, []);
 
     const filterData = () => {
+        sendGetRequest();
+    };
+
+    const sendGetRequest = () => {
         axios.get(`https://localhost:7212/api/order?startDate=${dates[0]}&endDate=${dates[1]}`)
             .then((response) => {
-                console.log('test', response.data);
                 setOrders(response.data);
-                console.log(orders)
             })
             .catch((error) => {
                 console.log('error', error);
             })
-    };
+    }
+
 
     const rowClickHandler = (id: number) => {
         setOrderId(id);
         setEditForm((prev) => !prev);
     }
-
-
-    console.log('end date', dates[0]);
 
     return (
         <div>
@@ -101,7 +91,7 @@ const MainTable = () => {
 
                         orders.map((order, index) => {
                             return (
-                                <tr onClick={() => rowClickHandler(order.id)} key={index}>
+                                <tr style={{ cursor: "pointer" }} onClick={() => rowClickHandler(order.id)} key={index}>
                                     <td>{order.id}</td>
                                     <td>{order.number}</td>
                                     <td>{dayjs(order.date).format('MM-DD-YYYY')}</td>

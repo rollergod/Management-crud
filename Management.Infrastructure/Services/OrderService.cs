@@ -1,22 +1,26 @@
 ﻿using Management.Application.Common.Interfaces.Repositories;
 using Management.Application.Common.Interfaces.Services;
+using Management.Application.Shared.Dto;
 using Management.Application.Shared.Errors.Exceptions;
 using Management.Application.Shared.RequestFeatures;
 using Management.Domain.Entities;
-using System.Data;
+using Mapster;
+using MapsterMapper;
 
 namespace Management.Infrastructure.Services
 {
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Order> CreateOrderAsync(Order order)
+        public async Task<OrderDto> CreateOrderAsync(OrderDto order)
         {
             var dateTimeParams = new OrderParameters
             {
@@ -31,39 +35,40 @@ namespace Management.Infrastructure.Services
             if(isOrderExist)
                 throw new OrderWithCurrentNumberAndProviderExist(order.Number,order.ProviderId);
 
-            await _orderRepository.CreateOrderAsync(order);
+            var orderEntity = order.Adapt<Order>();
+            await _orderRepository.CreateOrderAsync(orderEntity);
 
             return order;
         }   
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync(OrderParameters orderParams, bool trackChanges)
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync(OrderParameters orderParams, bool trackChanges)
         {
             var orders = await _orderRepository.GetOrdersAsync(orderParams,trackChanges);
 
-            return orders;
+            var ordersDto = orders.Adapt<IEnumerable<OrderDto>>();
+
+            return ordersDto;
         }
 
-        public async Task<Order> GetOrderByIdAsync(int id, bool trackChanges)
+        public async Task<OrderDto> GetOrderByIdAsync(int id, bool trackChanges)
         {
             var order = await _orderRepository.GetOrderAsync(id, trackChanges);
 
             if (order == null)
                 throw new OrderNotFoundException(id);
 
-            return order;
+            var orderDto = order.Adapt<OrderDto>();
+            return orderDto;
         }
 
-        public async Task<Order> UpdateOrderAsync(int id, Order orderForUpdate,bool trackChanges)
+        public async Task<OrderDto> UpdateOrderAsync(int id, OrderDto orderForUpdate,bool trackChanges)
         {
-            var order = await _orderRepository.GetOrderAsync(id, trackChanges: false);
+            var order = await _orderRepository.GetOrderAsync(id, trackChanges);
 
             if (order == null)
                 throw new OrderNotFoundException(id);
 
-            order.ProviderId = orderForUpdate.ProviderId;
-            order.Number = orderForUpdate.Number;
-            order.Items = orderForUpdate.Items;
-
+            _mapper.Map(orderForUpdate, order);
             await _orderRepository.UpdateOrderAsync(order);
 
             return orderForUpdate;
@@ -79,11 +84,13 @@ namespace Management.Infrastructure.Services
             await _orderRepository.DeleteOrderAsync(order);
         }
 
-        public async Task<Order> GetOrderWithItemsAsync(int orderId,bool trackChanges)
+        public async Task<OrderDto> GetOrderWithItemsAsync(int orderId,bool trackChanges)
         {
-            var ordersWithItems = await _orderRepository.GetOrderWithItemsAsync(orderId,trackChanges);
+            var orderWithItems = await _orderRepository.GetOrderWithItemsAsync(orderId,trackChanges);
 
-            return ordersWithItems;
+            var orderWithItemsDto = orderWithItems.Adapt<OrderDto>();
+
+            return orderWithItemsDto;
         }
     }
 }

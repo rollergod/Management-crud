@@ -6,29 +6,21 @@ import Col from 'react-bootstrap/Col';
 
 import Select from 'react-select';
 import axios from 'axios';
-import { SingleValue } from 'react-select/dist/declarations/src';
-
-interface Option {
-    value: string
-}
 
 const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
 
     const handleClose = () => setOpen(false);
     const [number, setNumber] = React.useState('');
-    const [providerId, setProviderId] = React.useState(0);
     const [items, setItems] = React.useState([{
         name: '', quantity: '', unit: ''
     }]);
     const [providers, setProviders] = React.useState([{}]);
-
 
     const [editOrderItemNumber, setEditOrderItemNumber] = React.useState('');
     const [editOrderItemProviderId, setEditOrderItemProviderId] = React.useState(0);
     const providersArrForLabel = providers.map(function (i) { return { value: i.id, label: i.name } });
 
     React.useEffect(() => {
-
         axios.get(`https://localhost:7212/api/provider`)
             .then((response) => {
                 setProviders(response.data);
@@ -43,13 +35,20 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                     setEditOrderItemNumber(response.data.number)
                     setEditOrderItemProviderId(response.data.providerId)
                     setItems(response.data.items)
-                    console.log('orderItem', response.data);
                 })
                 .catch((error) => {
                     console.log('error', error);
                 })
         }
     }, []);
+
+    const handleSelectChange = (option: any) => {
+        setEditOrderItemProviderId(Number(option?.value));
+    }
+
+    const getValue = () => {
+        return editOrderItemProviderId ? providersArrForLabel.find(c => c.value === editOrderItemProviderId) : '';
+    };
 
     const handleSubmit = () => {
         if (orderId > 0) {
@@ -109,9 +108,6 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
         setItems(data)
     }
 
-    const handleSelectChange = (option: SingleValue<Option>) => {
-        setProviderId(Number(option?.value));
-    }
 
     return (
         <Modal show={open} onHide={handleClose}>
@@ -128,7 +124,12 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                         }
                     </Col>
                     <Col>
-                        <Select options={providersArrForLabel} value={providersArrForLabel.find(el => el.value === editOrderItemProviderId)} onChange={handleSelectChange} />
+                        <Select
+                            options={providersArrForLabel}
+                            value={getValue()}
+                            onChange={handleSelectChange}
+                        />
+
                     </Col>
                 </Row>
                 <button onClick={addRow}>Добавить элемент заказа</button>
