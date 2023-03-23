@@ -43,7 +43,7 @@ const MainTable = () => {
     };
 
     const sendGetRequest = () => {
-        axios.get(`https://localhost:7212/api/order?startDate=${dates[0]}&endDate=${dates[1]}`)
+        axios.get(`http://localhost:5000/api/order?startDate=${dates[0]}&endDate=${dates[1]}`)
             .then((response) => {
                 setOrders(response.data);
             })

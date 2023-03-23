@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  backend:
+    image: ${DOCKER_REGISTRY-}managementapi
+    build:
+      context: .
+      dockerfile: Management.Api/Dockerfile
+
+  database:
+    image: postgres
+    container_name: database
+    ports:
+      - 5438:5432
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=superadmin
+      - POSTGRES_DB=ManagementDb
+    volumes:
+      - app_data:/var/lib/postgresql/data
+
+  client:
+    image: ${DOCKER_REGISTRY-}client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 5001:3000
+
+volumes:
+  app_data:

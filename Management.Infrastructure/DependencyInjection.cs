@@ -15,8 +15,11 @@ namespace Management.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
         {
+            //services.AddDbContext<AppDbContext>(options =>
+            //    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(configuration.GetConnectionString("DockerConnection")));
 
             services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddScoped<IOrderRepository, OrderRepository>();

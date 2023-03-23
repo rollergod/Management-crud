@@ -14,7 +14,9 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
     const [items, setItems] = React.useState([{
         name: '', quantity: '', unit: ''
     }]);
-    const [providers, setProviders] = React.useState([{}]);
+    const [providers, setProviders] = React.useState([{
+        id: '', name: ''
+    }]);
 
     const [editOrderItemNumber, setEditOrderItemNumber] = React.useState('');
     const [editOrderItemProviderId, setEditOrderItemProviderId] = React.useState(0);
@@ -47,12 +49,11 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
     }
 
     const getValue = () => {
-        return editOrderItemProviderId ? providersArrForLabel.find(c => c.value === editOrderItemProviderId) : '';
+        return editOrderItemProviderId ? providersArrForLabel.find(c => Number(c.value) === editOrderItemProviderId) : '';
     };
 
     const handleSubmit = () => {
         if (orderId > 0) {
-            console.log(items);
             const data = {
                 'id': orderId,
                 'number': editOrderItemNumber,
@@ -68,7 +69,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
         else {
             const data = {
                 'number': number,
-                'providerId': providerId,
+                'providerId': editOrderItemProviderId,
                 'items': items
             };
             axios.post("https://localhost:7212/api/order", data)
@@ -98,7 +99,6 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
 
     const addRow = () => {
         let newItem = { name: '', quantity: '', unit: '' }
-
         setItems([...items, newItem]);
     }
 
@@ -107,7 +107,6 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
         data.splice(index, 1)
         setItems(data)
     }
-
 
     return (
         <Modal show={open} onHide={handleClose}>
