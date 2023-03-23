@@ -13,13 +13,13 @@ namespace Management.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddDbContext<AppDbContext>(options =>
-            //    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
             services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DockerConnection")));
+               options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+            // services.AddDbContext<AppDbContext>(options => 
+            //     options.UseNpgsql(configuration.GetConnectionString("DockerConnection")));
 
             services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddScoped<IOrderRepository, OrderRepository>();

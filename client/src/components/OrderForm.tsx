@@ -10,7 +10,7 @@ import axios from 'axios';
 const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
 
     const handleClose = () => setOpen(false);
-    const [number, setNumber] = React.useState('');
+    const [number, setNumber] = React.useState<string>('');
     const [items, setItems] = React.useState([{
         name: '', quantity: '', unit: ''
     }]);
@@ -113,50 +113,81 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
             <Modal.Header closeButton>
                 <Modal.Title>{headerText}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className='text-center'>
                 <Row>
                     <Col>
                         {
                             orderId > 0 ?
-                                <input type="text" className='form-control' placeholder='Введите номер заказа' value={editOrderItemNumber} onChange={(e) => setEditOrderItemNumber(e.target.value)} />
-                                : <input type="text" className='form-control' placeholder='Введите номер заказа' value={number} onChange={(e) => setNumber(e.target.value)} />
+                                <div>
+                                    <label>Name</label>
+                                    <input
+                                        type="text"
+                                        className='form-control text-center'
+                                        placeholder='Введите номер заказа'
+                                        value={editOrderItemNumber}
+                                        onChange={(e) => setEditOrderItemNumber(e.target.value)}
+                                    />
+                                </div>
+                                :
+                                <div>
+                                    <label>Name</label>
+                                    <input
+                                        type="text"
+                                        className='form-control text-center'
+                                        placeholder='Введите номер заказа'
+                                        value={number}
+                                        onChange={(e) => setNumber(e.target.value)}
+                                    />
+                                </div>
                         }
                     </Col>
                     <Col>
+                        <label>Provider</label>
                         <Select
                             options={providersArrForLabel}
                             value={getValue()}
                             onChange={handleSelectChange}
                         />
-
                     </Col>
                 </Row>
-                <button onClick={addRow}>Добавить элемент заказа</button>
+                <button className='btn btn-primary mt-3' onClick={addRow}>Добавить элемент заказа</button>
                 {
                     items.length > 0 &&
                     items.map((obj, index) => {
                         return (
-                            <div key={index}>
-                                <input
-                                    name='name'
-                                    placeholder='Название товара'
-                                    value={obj.name}
-                                    onChange={event => handleFormChange(index, event)}
-                                />
-                                <input
-                                    type='number'
-                                    name='quantity'
-                                    placeholder='Количество'
-                                    value={obj.quantity}
-                                    onChange={event => handleFormChange(index, event)}
-                                />
-                                <input
-                                    name='unit'
-                                    placeholder='Единица измерения'
-                                    value={obj.unit}
-                                    onChange={event => handleFormChange(index, event)}
-                                />
-                                <button onClick={() => removeFields(index)}>Remove</button>
+                            <div key={index} className='mt-3'>
+                                <div className='mb-1'>
+                                    <label>OrderItem Name</label>
+                                    <input
+                                        className='form-control w-50'
+                                        name='name'
+                                        placeholder='Название товара'
+                                        value={obj.name}
+                                        onChange={event => handleFormChange(index, event)}
+                                    />
+                                </div>
+                                <div className='mb-1'>
+                                    <label>OrderItem Quantity</label>
+                                    <input
+                                        className='form-control w-50'
+                                        type='number'
+                                        name='quantity'
+                                        placeholder='Количество'
+                                        value={obj.quantity}
+                                        onChange={event => handleFormChange(index, event)}
+                                    />
+                                </div>
+                                <div className='mb-1'>
+                                    <label>OrderItem Unit</label>
+                                    <input
+                                        className='form-control w-50'
+                                        name='unit'
+                                        placeholder='Единица измерения'
+                                        value={obj.unit}
+                                        onChange={event => handleFormChange(index, event)}
+                                    />
+                                </div>
+                                <button className='btn btn-danger mt-2' onClick={() => removeFields(index)}>Remove</button>
                             </div>
                         )
                     })

@@ -4,5 +4,6 @@
     {
         public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Now.AddMonths(-1));
         public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public string OrderBy { get; set; } = "";
     }
 }

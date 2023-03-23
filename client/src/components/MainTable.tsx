@@ -2,17 +2,10 @@ import axios from "axios";
 import React from "react";
 import Table from 'react-bootstrap/Table';
 import OrderForm from "./OrderForm";
-
+import Select from 'react-select';
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
-
-// interface Item {
-//     orderId: number,
-//     name: string,
-//     quantity: number,
-//     unit: string
-// }
 
 interface Order {
     id: number,
@@ -23,15 +16,26 @@ interface Order {
 const MainTable = () => {
     const endDate = dayjs();
     const startDate = endDate.subtract(1, 'month');
-    const [dates, setDates] = React.useState([new Date(startDate).toDateString(), new Date(endDate).toDateString()]);
+
+    const [dates, setDates] = React.useState<any[]>([new Date(startDate).toDateString(), new Date(endDate).toDateString()]);
     const [orders, setOrders] = React.useState<Order[]>([]);
     const [editForm, setEditForm] = React.useState<boolean>(false);
     const [addForm, setAddForm] = React.useState<boolean>(false);
     const [orderId, setOrderId] = React.useState<number>(0);
+
     const headers = [
         'Id',
         'Number',
         'Date',
+    ];
+
+    const options = [
+        { value: 'Id asc', label: 'Id ↑' },
+        { value: 'Number asc', label: 'Number ↑' },
+        { value: 'Date asc', label: 'Date ↑' },
+        { value: 'Id desc', label: 'Id ↓' },
+        { value: 'Number desc', label: 'Number ↓' },
+        { value: 'Date desc', label: 'Date ↓' },
     ];
 
     React.useEffect(() => {
@@ -43,27 +47,40 @@ const MainTable = () => {
     };
 
     const sendGetRequest = () => {
-        axios.get(`http://localhost:5000/api/order?startDate=${dates[0]}&endDate=${dates[1]}`)
+        axios.get(`https://localhost:7212/api/order?startDate=${dates[0]}&endDate=${dates[1]}&orderBy=${filters}`)
             .then((response) => {
                 setOrders(response.data);
             })
             .catch((error) => {
                 console.log('error', error);
             })
-    }
-
+    };
 
     const rowClickHandler = (id: number) => {
         setOrderId(id);
         setEditForm((prev) => !prev);
-    }
+    };
+
+    const [filters, setFilters] = React.useState<any>(['Id desc']);
+
+    const getValue = () => {
+        if (filters) {
+            return options.filter(option => filters.indexOf(option.value) >= 0);
+        } else {
+            return [];
+        }
+    };
+
+    const onChange = (newValue: any) => {
+        setFilters(newValue.map((v: any) => v.value));
+    };
 
     return (
         <div>
             <button onClick={() => setAddForm((prev) => !prev)} className='btn btn-primary'>Add New Order</button>
             {
-                addForm && <OrderForm headerText='Добавить заказ' open={addForm} setOpen={setAddForm}></OrderForm>
-                || editForm && <OrderForm orderId={orderId} headerText='Изменить заказ' open={editForm} setOpen={setEditForm}></OrderForm>
+                addForm && <OrderForm headerText='Добавить заказ' open={addForm} setOpen={setAddForm} />
+                || editForm && <OrderForm headerText='Изменить заказ' open={editForm} setOpen={setEditForm} orderId={orderId} />
             }
             <div style={{ margin: 20 }}>
                 <RangePicker format={'MM-DD-YYYY'} defaultValue={[startDate, endDate]} onChange={(values) => {
@@ -75,6 +92,9 @@ const MainTable = () => {
                     style={{ marginLeft: 20 }}
                     onClick={() => filterData()}
                     className='btn btn-primary'>Filter</button>
+
+                <Select options={options} onChange={onChange} value={getValue()} isMulti={true}></Select>
+
             </div>
             <Table responsive>
                 <thead>

@@ -22,9 +22,11 @@ namespace Management.Infrastructure.Repository
                 await _context.Orders
                 .AsNoTracking()
                 .DateQuery(orderParams)
+                .Sort(orderParams.OrderBy)
                 .ToListAsync() :
                 await _context.Orders
                 .DateQuery(orderParams)
+                .Sort(orderParams.OrderBy)
                 .ToListAsync();
         }
 
