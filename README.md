@@ -1,6 +1,6 @@
 # Management
 
-тестовое задание от компании "АСУ "МЕНЕДЖМЕНТ""
+Тестовое задание от компании "АСУ "МЕНЕДЖМЕНТ""
 
 ## Структура папок
 
@@ -42,67 +42,71 @@ Provide an overview of the directory structure and files, for example:
 ```
 ## Запуск приложения
 
-Coming soon...
+В приложении присутствует docker-compose файл. В нем настроена конфигурация запуска бэкенда и фронтенда.
+Не забудьте поменять ConnectionString в классе Management.Infrastructure/DependencyInjection
+
+Также необходимо будет поменять URL бэкенда во фронтенд приложении.
 
 ## О приложении
 
 CRUD приложение. Фронтенд - react vite, Бэкекнд - .Net 6
-Апи имеет 3 endpoint`а
 
-![image](https://user-images.githubusercontent.com/91565374/225708103-4d2c3e4d-b5e5-4728-878c-50486ad74e2b.png)
+API имеет 10 endpoint`ов.
 
-* *get* **/api/game/turn** - возвращает ход игрока - X или O.
-* *post* **/api/game** - принимает два параметра - координата по оси x и коордитана по оси y. Два раза одни и те же координаты указывать нельзя.
-* *post* **/api/game/new-game** - создает новую игру
+![image](https://user-images.githubusercontent.com/91565374/227377931-ffb2cfc4-d88e-440b-9c6f-e55ecb3f9113.png)
 
-## Пример ввода координат
+## Пример отправки запроса для создания Order
 
 **Request:**
 ```json
-POST /game HTTP/1.1
+POST /order HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Content-Length: xy
 
 {
-    "xCord": "1",
-    "yCord": "1" 
+  "number": "Test",
+  "date": "01/01/2022",
+  "providerId": 1,
+  "items": [
+    {
+      "name": "TestOrderItem",
+      "quantity": 1,
+      "unit": "TestOrderUnit"
+    }
+  ]
 }
 ```
 **Successful Response:**
 ```json
 HTTP/1.1 200 OK
-Server: TicTacToe
+Server: Management
 Content-Type: application/json
 Content-Length: xy
 
 {
-   "Ход сделан"
+  "number": "Test",
+  "date": "2022-01-01",
+  "providerId": 1,
+  "items": [
+    {
+      "name": "TestOrderItem",
+      "quantity": 1,
+      "unit": "TestOrderUnit"
+    }
+  ]
 }
-
 ```
 **Failed Response:**
 ```json
 HTTP/1.1 404 BadRequest
-Server: TicTacToe
+Server: Management
 Content-Type: application/json
 Content-Length: xy
 
 {
     "code": 404,
     "message": "bad request",
-    "resolve": "Координата с позицией x и y занята"
-}
-
-HTTP/1.1 404 BadRequest
-Server: TicTacToe
-Content-Type: application/json
-Content-Length: xy
-
-{
-    "code": 404,
-    "message": "bad request",
-    "resolve": "Координаты выходят за пределы таблицы"
 }
 
 ``` 
