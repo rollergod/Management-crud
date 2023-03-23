@@ -1,10 +1,10 @@
-import axios from "axios";
 import React from "react";
 import Table from 'react-bootstrap/Table';
 import OrderForm from "./OrderForm";
 import Select from 'react-select';
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
+import { client } from "../api/axiosInstance";
 const { RangePicker } = DatePicker;
 
 interface Order {
@@ -47,7 +47,7 @@ const MainTable = () => {
     };
 
     const sendGetRequest = () => {
-        axios.get(`https://localhost:7212/api/order?startDate=${dates[0]}&endDate=${dates[1]}&orderBy=${filters}`)
+        client.get(`/order?startDate=${dates[0]}&endDate=${dates[1]}&orderBy=${filters}`)
             .then((response) => {
                 setOrders(response.data);
             })

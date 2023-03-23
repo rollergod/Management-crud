@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import Select from 'react-select';
-import axios from 'axios';
+import { client } from '../api/axiosInstance';
 
 const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
 
@@ -23,7 +23,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
     const providersArrForLabel = providers.map(function (i) { return { value: i.id, label: i.name } });
 
     React.useEffect(() => {
-        axios.get(`https://localhost:7212/api/provider`)
+        client.get(`/provider`)
             .then((response) => {
                 setProviders(response.data);
             })
@@ -32,7 +32,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
             })
 
         if (orderId > 0) {
-            axios.get(`https://localhost:7212/api/order/${orderId}/orderItems`)
+            client.get(`/order/${orderId}/orderItems`)
                 .then((response) => {
                     setEditOrderItemNumber(response.data.number)
                     setEditOrderItemProviderId(response.data.providerId)
@@ -60,7 +60,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                 'providerId': editOrderItemProviderId,
                 'items': items
             };
-            axios.put(`https://localhost:7212/api/order/${orderId}`, data)
+            client.put(`/order/${orderId}`, data)
                 .then((resp) => {
                     if (resp.status === 200)
                         setOpen(false);
@@ -72,7 +72,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                 'providerId': editOrderItemProviderId,
                 'items': items
             };
-            axios.post("https://localhost:7212/api/order", data)
+            client.post("/order", data)
                 .then((resp) => {
                     if (resp.status === 200)
                         setOpen(false);
@@ -81,7 +81,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
     }
 
     const handleRemove = (id: number) => {
-        axios.delete(`https://localhost:7212/api/order/${orderId}`)
+        client.delete(`/order/${orderId}`)
             .then((response) => {
                 console.log('delete', response);
                 setOpen(false);
@@ -159,7 +159,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                                 <div className='mb-1'>
                                     <label>OrderItem Name</label>
                                     <input
-                                        className='form-control w-50'
+                                        className='form-control w-50 m-auto'
                                         name='name'
                                         placeholder='Название товара'
                                         value={obj.name}
@@ -169,7 +169,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                                 <div className='mb-1'>
                                     <label>OrderItem Quantity</label>
                                     <input
-                                        className='form-control w-50'
+                                        className='form-control w-50 m-auto'
                                         type='number'
                                         name='quantity'
                                         placeholder='Количество'
@@ -180,7 +180,7 @@ const OrderForm = ({ open, setOpen, headerText, orderId = 0 }) => {
                                 <div className='mb-1'>
                                     <label>OrderItem Unit</label>
                                     <input
-                                        className='form-control w-50'
+                                        className='form-control w-50 m-auto'
                                         name='unit'
                                         placeholder='Единица измерения'
                                         value={obj.unit}

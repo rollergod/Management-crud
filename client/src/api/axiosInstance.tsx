@@ -3,5 +3,5 @@ import React from "react";
 
 
 export const client = axios.create({
-    baseURL: "http://localhost:5110/api"
+    baseURL: "https://localhost:7212/api"
 });
