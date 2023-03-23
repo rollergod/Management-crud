@@ -4,7 +4,6 @@
 
 ## Структура папок
 
-Provide an overview of the directory structure and files, for example:
 ```bash
 ├───client
 │   ├───public
